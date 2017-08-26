@@ -281,6 +281,3 @@ FROM(
 		ON(e.cod_editora = l.cod_editora)
 	WHERE e.cod_editora = 2
 	GROUP BY e.cod_editora) AS tabela
-
-
-      
