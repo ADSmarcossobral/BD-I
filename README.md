@@ -1,1 +1,1 @@
-# BD-I
+# Scripts para POSTGRESQL
