@@ -225,8 +225,7 @@ FROM editora AS e INNER JOIN livro AS l
 GROUP BY e.cod_editora;
 
 
--- 24. Apresentar o número de autores por livro, mas apenas dos livros que
-possuem mais de 1 autor
+-- 24. Apresentar o número de autores por livro, mas apenas dos livros que possuem mais de 1 autor
 
 SELECT l.titulo, COUNT(*) as qtde_autor
 FROM livro AS l INNER JOIN livro_autor AS la
@@ -235,8 +234,7 @@ GROUP BY l.cod_livro
 HAVING COUNT(*) > 1;
 
 
--- 25. Apresentar a média de preços geral por editora, mas apenas as editoras que
-possuem média maior que R$ 80,00
+-- 25. Apresentar a média de preços geral por editora, mas apenas as editoras que possuem média maior que R$ 80,00
 
 SELECT e.descricao, AVG(l.preco) AS media 
 FROM editora AS e INNER JOIN livro as l
@@ -244,14 +242,45 @@ FROM editora AS e INNER JOIN livro as l
 GROUP BY e.cod_editora
 HAVING AVG(l.preco) > 80;
 
--- 26. Apresentar o nome dos autores que não são autores do livro Banco de
-Dados
+-- 26. Apresentar o nome dos autores que não são autores do livro Banco de Dados
 
 SELECT nome
 FROM autor
-WHERE 
+WHERE cod_autor NOT IN(
+	SELECT cod_autor
+	FROM livro_autor
+	WHERE cod_livro = 1
+);
 
-27. Apresentar a quantidade de livros da editora Campus e Abril em colunas
-diferentes.
+SELECT nome
+FROM autor as a
+WHERE NOT EXISTS(
+	SELECT *
+	FROM livro_autor as la
+	WHERE la.cod_auor = a.cod_autor
+	AND la.cod_livro = 1
+);
+
+SELECT nome
+FROM autor AS a LEFT JOIN livro_autor as la
+	ON(a.cod_autor = la.cod_autor AND cod_livro = 1)
+WHERE cod_livro IS NULL
+
+-- 27. Apresentar a quantidade de livros da editora Campus e Abril em colunas diferentes.
+
+SELECT SUM(campus) AS campus, SUM(abril) AS abril
+FROM(
+	SELECT COUNT(*) AS campus, 0 AS abril
+	FROM editora AS e INNER JOIN livro AS l
+		ON(e.cod_editora = l.cod_editora)
+	WHERE e.cod_editora = 1
+	GROUP BY e.cod_editora
+	UNION
+	SELECT 0, COUNT(*) AS abril
+	FROM editora AS e INNER JOIN livro AS l
+		ON(e.cod_editora = l.cod_editora)
+	WHERE e.cod_editora = 2
+	GROUP BY e.cod_editora) AS tabela
+
 
       
