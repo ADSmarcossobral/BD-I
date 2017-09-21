@@ -149,5 +149,32 @@ nas zonas/seções; */
 votos obtidos, apenas para os candidatos que tiveram média de votos superior à média
 de votos do seu partido. */
 
+INSERT INTO zona_secao VALUES(4,21,'Caja', 254);
 
+SELECT *
+FROM zona_secao
 
+INSERT INTO cargo VALUES(1, 'Prefeito');
+
+SELECT *
+FROM cargo
+
+INSERT INTO partido VALUES(1,'BO');
+
+SELECT *
+FROM partido
+
+INSERT INTO candidato VALUES(13,'Goku',1,1);
+
+SELECT *
+FROM candidato
+
+INSERT INTO votacao(qtd_votos, num_zona, num_secao, num_candidato)
+	VALUES(354, 5, 21, 13);
+
+UPDATE votacao
+SET data_votacao = '21/09/2017'
+WHERE num_zona = 5 AND num_secao = 21;
+
+SELECT *
+FROM votacao
