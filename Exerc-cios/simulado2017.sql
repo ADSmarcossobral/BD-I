@@ -74,12 +74,10 @@ WHERE j.jog_oid IN(
 	SELECT j.jog_oid
 	FROM jogador AS j
 	WHERE j.tim_oid IN(
-		SELECT t.tim_oid
-		FROM time AS t
-		WHERE (
-			SELECT COUNT(tim_oid)
-			FROM campeonato_time
-		) >= 3
+		SELECT tim_oid
+		FROM campeonato_time
+		GROUP BY tim_oid
+		HAVING COUNT(tim_oid) > 2
 	)
 );
 
@@ -95,11 +93,12 @@ WHERE j.jog_gols IN(
 /* e) Selecione os jogadores e a soma do número de jogos dos campeonatos de
 2004 a 2007 que ele participou. */
 
-SELECT j.jog_nome
-FROM jogador AS j
-WHERE j.jog_oid IN(
-	SELECT j.jog_oid
-);
+SELECT jogador.jog_nome, SUM(c.cam_num_jogos)
+FROM jogador INNER JOIN time ON(time.tim_oid = jogador.tim_oid)
+	INNER JOIN campeonato_time AS ct ON(ct.tim_oid = time.tim_oid)
+	INNER JOIN campeonato AS c ON(c.cam_oid = ct.cam_oid)
+WHERE c.cam_ano BETWEEN 2004 AND 2007
+GROUP BY jogador.jog_nome;
 
 /* f) Selecione os jogadores que participaram de dois campeonatos apenas e
 tenham feito menos que 10 gols. */ 
@@ -107,16 +106,30 @@ tenham feito menos que 10 gols. */
 SELECT j.jog_nome
 FROM jogador AS j
 WHERE j.tim_oid IN(
-	SELECT t.tim_oid
-	FROM time AS t
-	WHERE 2 NOT IN(
-		SELECT COUNT(tim_oid)
+	SELECT tim_oid
+	FROM time
+	WHERE tim_oid IN(
+		SELECT tim_oid
 		FROM campeonato_time
+		GROUP BY tim_oid
+		HAVING COUNT(tim_oid) = 2
 	)
 ) AND j.jog_gols < 10;
 
 /* g) Apague o jogador cujo time possua a letra 'e' e tenha participado APENAS de
 um campeonato. */
+
+DELETE FROM jogador AS j
+WHERE j.tim_oid IN(
+	SELECT tim_oid
+	FROM time
+	WHERE tim_nome LIKE '%E%' AND tim_oid IN(
+		SELECT tim_oid
+		FROM campeonato_time
+		GROUP BY tim_oid
+		HAVING COUNT(tim_oid) = 1
+	)
+);
 
 /* h) Altere para o nome ‘Grinaldo’ o jogador que participe de um time que tenha
 participado de um campeonato com pelo menos 30 jogos. */
